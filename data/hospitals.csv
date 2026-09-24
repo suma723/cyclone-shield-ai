@@ -1,0 +1,7 @@
+hospital_id,name,latitude,longitude,capacity,importance,elevation,primary_access_road,secondary_access_road
+H01,King George Hospital (KGH),17.7052,83.3061,1200,Critical Regional Trauma,8.5,R01,R03
+H02,Care Hospital Waltair,17.7195,83.3120,350,Tertiary Multispecialty,24.0,R03,R04
+H03,Apollo Hospital Health City,17.7601,83.3242,400,Tertiary Super Specialty,48.0,R04,R05
+H04,SevenHills Hospital,17.7145,83.3050,300,Secondary Emergency,22.0,R03,R01
+H05,Visakha Institute of Medical Sciences (VIMS),17.7550,83.3325,500,Government Multi-Specialty,32.0,R04,R05
+H06,Gajuwaka Community Health Center,17.6920,83.2150,150,Community Primary Center,36.0,R05,R06

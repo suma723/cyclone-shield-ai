@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" width="500" height="120">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+    <linearGradient id="cycloneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+  </defs>
+  <!-- Background Card -->
+  <rect width="500" height="120" rx="16" fill="#0f172a" />
+  
+  <!-- Shield Icon -->
+  <g transform="translate(30, 20)">
+    <path d="M40 5 L75 18 C75 55 50 75 40 85 C30 75 5 55 5 18 Z" fill="url(#shieldGrad)" stroke="#38bdf8" stroke-width="2" />
+    <!-- Cyclone Swirl Inside Shield -->
+    <path d="M40 28 C48 28 55 35 55 42 C55 50 45 54 38 52 C30 50 28 42 32 36 C35 32 44 32 46 38" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+    <circle cx="40" cy="42" r="3.5" fill="#f43f5e" />
+  </g>
+
+  <!-- Typography -->
+  <text x="130" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="28" fill="#ffffff" letter-spacing="1">
+    CYCLONE<tspan fill="#38bdf8">-SHIELD</tspan> <tspan fill="#f43f5e">AI</tspan>
+  </text>
+  <text x="130" y="78" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="12" fill="#94a3b8" letter-spacing="0.5">
+    IMPACT, INFRASTRUCTURE VULNERABILITY &amp; EVACUATION PLANNER
+  </text>
+  <text x="130" y="96" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="500" font-size="11" fill="#0284c7">
+    VISAKHAPATNAM METROPOLITAN REGION • DISASTER DECISION-SUPPORT
+  </text>
+</svg>

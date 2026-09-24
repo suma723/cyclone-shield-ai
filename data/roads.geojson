@@ -1,0 +1,137 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "road_id": "R01",
+        "name": "Beach Road Coastal Arterial (Road A)",
+        "importance": "Major Coastal Arterial",
+        "elevation_m": 3.8,
+        "coastal_distance_km": 0.1,
+        "speed_limit_kmh": 50,
+        "connects": ["A01", "A02", "A03", "H01", "S05"]
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [83.2985, 17.6937],
+          [83.3061, 17.7052],
+          [83.3180, 17.7126],
+          [83.3280, 17.7210],
+          [83.3392, 17.7289]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "road_id": "R02",
+        "name": "Bheemili Marine Drive Coastal Extension",
+        "importance": "Coastal Highway",
+        "elevation_m": 5.2,
+        "coastal_distance_km": 0.25,
+        "speed_limit_kmh": 60,
+        "connects": ["A02", "A05", "A04", "S01"]
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [83.3392, 17.7289],
+          [83.3567, 17.7562],
+          [83.3720, 17.7750],
+          [83.3775, 17.7816],
+          [83.3720, 17.7850]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "road_id": "R03",
+        "name": "Waltair Main Road Elevated Corridor (Road C)",
+        "importance": "Primary Inland Safe Route",
+        "elevation_m": 24.5,
+        "coastal_distance_km": 1.5,
+        "speed_limit_kmh": 50,
+        "connects": ["A01", "A07", "A08", "H02", "H04", "S02"]
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [83.3180, 17.7126],
+          [83.3142, 17.7202],
+          [83.3120, 17.7195],
+          [83.3005, 17.7118],
+          [83.3050, 17.7145],
+          [83.3210, 17.7280]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "road_id": "R04",
+        "name": "MVP - Health City Express Arterial",
+        "importance": "Strategic Hospital Corridor",
+        "elevation_m": 34.0,
+        "coastal_distance_km": 2.8,
+        "speed_limit_kmh": 65,
+        "connects": ["A06", "A09", "H03", "H05", "S03"]
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [83.3285, 17.7391],
+          [83.3168, 17.7345],
+          [83.3242, 17.7601],
+          [83.3325, 17.7550],
+          [83.3450, 17.8080]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "road_id": "R05",
+        "name": "NH16 National Highway Inland Bypass",
+        "importance": "High-Capacity Evacuation Spine",
+        "elevation_m": 42.0,
+        "coastal_distance_km": 5.5,
+        "speed_limit_kmh": 80,
+        "connects": ["A10", "A08", "A09", "A11", "H06"]
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [83.2104, 17.6908],
+          [83.2150, 17.6920],
+          [83.3005, 17.7118],
+          [83.3168, 17.7345],
+          [83.3482, 17.8042]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "road_id": "R06",
+        "name": "Simhachalam Hill Sanctuary Corridor",
+        "importance": "High-Ground Disaster Refuge Corridor",
+        "elevation_m": 60.0,
+        "coastal_distance_km": 8.0,
+        "speed_limit_kmh": 50,
+        "connects": ["A09", "A10", "A12", "S04"]
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [83.3168, 17.7345],
+          [83.2700, 17.7500],
+          [83.2505, 17.7667],
+          [83.2480, 17.7690]
+        ]
+      }
+    }
+  ]
+}

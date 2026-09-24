@@ -1,0 +1,7 @@
+shelter_id,name,latitude,longitude,capacity,elevation,coastal_distance,safety_features,access_road_id
+S01,Rushikonda Cyclone Multi-Purpose Shelter,17.7850,83.3720,1800,45.0,0.8,"Reinforced Concrete, Solar Microgrid, Rainwater Tank, First Aid Unit",R02
+S02,MVP AU Campus Cyclone Shelter,17.7280,83.3210,3200,32.0,1.8,"Elevated Plinth, Dual 100kVA Gensets, 50kL Potable Water, Heli-Landing Pad",R03
+S03,Madhurawada Relief Complex,17.8080,83.3450,2500,46.0,3.6,"Storm-Proof High School Complex, Food Storage, Emergency Medical Camp",R04
+S04,Simhachalam Hillside Sanctuary,17.7690,83.2480,4000,62.0,8.2,"High-Elevation Disaster Command Center, Dedicated Water Line, Mass Shelter Hall",R06
+S05,Lawson's Bay Coastal Community Hall,17.7295,83.3360,1200,6.0,0.25,"Standard Municipal Hall, Low Elevation, Vulnerable to High Surge & Wave Runup",R01
+S06,Old Town Port Relief Center,17.6960,83.2950,1500,7.5,0.45,"Masonry Hall, Lowland Coastal Buffer, Secondary Tidal Inundation Risk",R01

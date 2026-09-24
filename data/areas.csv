@@ -1,0 +1,13 @@
+id,name,latitude,longitude,population,elevation,coastal_distance,zone_type
+A01,RK Beach Coastal Sector,17.7126,83.3180,18500,3.5,0.15,Coastal Lowland
+A02,Lawson's Bay Colony,17.7289,83.3392,14200,4.0,0.30,Coastal Settlement
+A03,Visakhapatnam Old Town / Port,17.6937,83.2985,26000,5.2,0.40,Dense Coastal Urban
+A04,Rushikonda Coastal Hamlet,17.7816,83.3775,8900,4.8,0.20,Vulnerable Fisher Colony
+A05,Sagar Nagar Lowlands,17.7562,83.3567,11300,6.5,0.50,Suburban Coastal
+A06,MVP Colony Sector 4,17.7391,83.3285,32000,12.0,1.40,Inland High Density
+A07,Waltair Uplands,17.7202,83.3142,19500,28.0,1.20,Elevated Urban
+A08,Jagadamba Junction & Daba Gardens,17.7118,83.3005,38000,18.5,1.50,Commercial Core
+A09,Maddilapalem Central,17.7345,83.3168,29000,22.0,2.10,Transit Hub
+A10,Gajuwaka Industrial Hub,17.6908,83.2104,54000,35.0,6.80,Inland Industrial
+A11,Madhurawada Valley,17.8042,83.3482,41000,42.0,3.50,Inland Growth Zone
+A12,Simhachalam Foothills,17.7667,83.2505,22500,58.0,8.20,Inland Foothills Sanctuary
