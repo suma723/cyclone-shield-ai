@@ -46,6 +46,8 @@ from streamlit_folium import st_folium
 st.markdown(get_custom_css(), unsafe_allow_html=True)
 
 # Initialize Session State
+if "selected_location" not in st.session_state:
+    st.session_state.selected_location = "Select a location"
 if "has_run_analysis" not in st.session_state:
     st.session_state.has_run_analysis = True  # Auto-run initial baseline for immediate demo readiness
 if "selected_scenario" not in st.session_state:
@@ -88,91 +90,119 @@ with st.sidebar:
 
     # Data Source & Study Area
     st.markdown("##### 📍 Target Jurisdiction")
-    st.selectbox(
-        "Study Area",
-        ["Visakhapatnam, Andhra Pradesh, India"],
-        index=0,
-        disabled=True
+    location_options = ["Select a location", "Visakhapatnam, Andhra Pradesh"]
+    current_loc_idx = location_options.index(st.session_state.selected_location) if st.session_state.selected_location in location_options else 0
+    selected_loc = st.selectbox(
+        "📍 Select Study Location",
+        options=location_options,
+        index=current_loc_idx,
+        key="location_selector",
+        help="Select a geographic jurisdiction to initiate the cyclone disaster modeling pipeline."
     )
 
-    gee_avail, gee_msg = get_gee_status()
-    data_source_mode = st.radio(
-        "Data Layer Architecture",
-        ["Demo Data (Bundled High-Res Grid)", "Google Earth Engine (GEE Feed)"],
-        index=0,
-        help="CYCLONE-SHIELD AI runs 100% offline out-of-the-box with bundled high-precision geospatial sample data, and is architected to seamlessly plug into GEE."
-    )
-    if data_source_mode.startswith("Google"):
-        if gee_avail:
-            st.success(gee_msg)
-        else:
-            st.info("ℹ️ " + gee_msg + " (Automatic Local Fallback Active)")
+    if selected_loc != st.session_state.selected_location:
+        st.session_state.selected_location = selected_loc
+        if selected_loc == "Select a location":
+            st.session_state.ai_advisory = None
+            st.session_state.active_route = None
+        st.rerun()
 
-    st.markdown("---")
-    st.markdown("##### 🌀 Step 1 — Cyclone Scenario")
+    is_location_selected = (st.session_state.selected_location == "Visakhapatnam, Andhra Pradesh")
 
-    preset_name = st.selectbox(
-        "Scenario Preset",
-        list(SCENARIO_PRESETS.keys()),
-        index=list(SCENARIO_PRESETS.keys()).index(st.session_state.selected_scenario)
-    )
+    if not is_location_selected:
+        st.markdown("---")
+        st.info("👈 Please select **Visakhapatnam, Andhra Pradesh** above to configure cyclone parameters and run impact analysis.")
 
-    # Preset update trigger
-    if preset_name != st.session_state.selected_scenario:
-        st.session_state.selected_scenario = preset_name
-        st.session_state.storm_surge_m = SCENARIO_PRESETS[preset_name]["storm_surge_m"]
-        st.session_state.rainfall_mm = SCENARIO_PRESETS[preset_name]["rainfall_mm"]
-        st.session_state.wind_speed_kmh = SCENARIO_PRESETS[preset_name]["wind_speed_kmh"]
+        st.markdown("##### 🌀 Step 1 — Cyclone Scenario")
+        st.selectbox("Scenario Preset", list(SCENARIO_PRESETS.keys()), index=1, disabled=True, key="disabled_preset")
+        st.markdown("###### Parameter Fine-Tuning")
+        st.slider("Storm Surge Height (m)", 0.0, 6.0, 3.2, disabled=True, key="disabled_surge")
+        st.slider("24h Rainfall Intensity (mm)", 10.0, 500.0, 280.0, disabled=True, key="disabled_rain")
+        st.slider("Sustained Wind Speed (km/h)", 40, 220, 145, disabled=True, key="disabled_wind")
+        st.markdown("---")
+        st.markdown("##### 🌐 Alert Language")
+        st.selectbox("Default Alert Language", list(SUPPORTED_LANGUAGES.keys()), index=0, disabled=True, key="disabled_lang")
+        st.markdown("---")
+        st.button("⚡ RUN IMPACT ANALYSIS", type="primary", use_container_width=True, disabled=True, key="disabled_run_btn")
+    else:
+        gee_avail, gee_msg = get_gee_status()
+        data_source_mode = st.radio(
+            "Data Layer Architecture",
+            ["Demo Data (Bundled High-Res Grid)", "Google Earth Engine (GEE Feed)"],
+            index=0,
+            help="CYCLONE-SHIELD AI runs 100% offline out-of-the-box with bundled high-precision geospatial sample data, and is architected to seamlessly plug into GEE."
+        )
+        if data_source_mode.startswith("Google"):
+            if gee_avail:
+                st.success(gee_msg)
+            else:
+                st.info("ℹ️ " + gee_msg + " (Automatic Local Fallback Active)")
 
-    st.info(SCENARIO_PRESETS[preset_name]["description"])
+        st.markdown("---")
+        st.markdown("##### 🌀 Step 1 — Cyclone Scenario")
 
-    # Manual Fine-Tuning Sliders
-    st.markdown("###### Parameter Fine-Tuning")
-    storm_surge_val = st.slider(
-        "Storm Surge Height (m)",
-        min_value=0.0,
-        max_value=6.0,
-        value=float(st.session_state.storm_surge_m),
-        step=0.2,
-        help="Peak astronomical tide + cyclone storm surge height above mean sea level."
-    )
-    st.session_state.storm_surge_m = storm_surge_val
+        preset_name = st.selectbox(
+            "Scenario Preset",
+            list(SCENARIO_PRESETS.keys()),
+            index=list(SCENARIO_PRESETS.keys()).index(st.session_state.selected_scenario)
+        )
 
-    rainfall_val = st.slider(
-        "24h Rainfall Intensity (mm)",
-        min_value=10.0,
-        max_value=500.0,
-        value=float(st.session_state.rainfall_mm),
-        step=10.0,
-        help="Anticipated 24-hour precipitation accumulation."
-    )
-    st.session_state.rainfall_mm = rainfall_val
+        # Preset update trigger
+        if preset_name != st.session_state.selected_scenario:
+            st.session_state.selected_scenario = preset_name
+            st.session_state.storm_surge_m = SCENARIO_PRESETS[preset_name]["storm_surge_m"]
+            st.session_state.rainfall_mm = SCENARIO_PRESETS[preset_name]["rainfall_mm"]
+            st.session_state.wind_speed_kmh = SCENARIO_PRESETS[preset_name]["wind_speed_kmh"]
 
-    wind_val = st.slider(
-        "Sustained Wind Speed (km/h)",
-        min_value=40,
-        max_value=220,
-        value=int(st.session_state.wind_speed_kmh),
-        step=5,
-        help="Maximum sustained surface wind speeds."
-    )
-    st.session_state.wind_speed_kmh = wind_val
+        st.info(SCENARIO_PRESETS[preset_name]["description"])
 
-    st.markdown("---")
-    st.markdown("##### 🌐 Alert Language")
-    lang_choice = st.selectbox(
-        "Default Alert Language",
-        list(SUPPORTED_LANGUAGES.keys()),
-        index=list(SUPPORTED_LANGUAGES.keys()).index(st.session_state.selected_language)
-    )
-    st.session_state.selected_language = lang_choice
+        # Manual Fine-Tuning Sliders
+        st.markdown("###### Parameter Fine-Tuning")
+        storm_surge_val = st.slider(
+            "Storm Surge Height (m)",
+            min_value=0.0,
+            max_value=6.0,
+            value=float(st.session_state.storm_surge_m),
+            step=0.2,
+            help="Peak astronomical tide + cyclone storm surge height above mean sea level."
+        )
+        st.session_state.storm_surge_m = storm_surge_val
 
-    st.markdown("---")
-    run_btn = st.button("⚡ RUN IMPACT ANALYSIS", type="primary", use_container_width=True)
-    if run_btn:
-        st.session_state.has_run_analysis = True
-        st.session_state.ai_advisory = None  # Reset advisory for new run
-        st.session_state.active_route = None
+        rainfall_val = st.slider(
+            "24h Rainfall Intensity (mm)",
+            min_value=10.0,
+            max_value=500.0,
+            value=float(st.session_state.rainfall_mm),
+            step=10.0,
+            help="Anticipated 24-hour precipitation accumulation."
+        )
+        st.session_state.rainfall_mm = rainfall_val
+
+        wind_val = st.slider(
+            "Sustained Wind Speed (km/h)",
+            min_value=40,
+            max_value=220,
+            value=int(st.session_state.wind_speed_kmh),
+            step=5,
+            help="Maximum sustained surface wind speeds."
+        )
+        st.session_state.wind_speed_kmh = wind_val
+
+        st.markdown("---")
+        st.markdown("##### 🌐 Alert Language")
+        lang_choice = st.selectbox(
+            "Default Alert Language",
+            list(SUPPORTED_LANGUAGES.keys()),
+            index=list(SUPPORTED_LANGUAGES.keys()).index(st.session_state.selected_language)
+        )
+        st.session_state.selected_language = lang_choice
+
+        st.markdown("---")
+        run_btn = st.button("⚡ RUN IMPACT ANALYSIS", type="primary", use_container_width=True)
+        if run_btn:
+            st.session_state.has_run_analysis = True
+            st.session_state.ai_advisory = None  # Reset advisory for new run
+            st.session_state.active_route = None
 
     st.markdown("""
     <div style="font-size: 0.74rem; color: #475569; margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 10px; background: #f8fafc; border-radius: 6px; padding: 10px;">
@@ -180,6 +210,121 @@ with st.sidebar:
         This is a prototype decision-support system for demonstration purposes. Risk values and recommendations are simulated/model-generated and are not official emergency warnings.
     </div>
     """, unsafe_allow_html=True)
+
+
+# ==========================================
+# STUDY LOCATION CHECK & WELCOME PLACEHOLDER
+# ==========================================
+if not is_location_selected:
+    active_api_key = get_gemini_api_key()
+    is_live_api = bool(active_api_key)
+
+    demo_badge_html = (
+        '<span class="badge-live-gov" style="background: #16a34a; margin-left: 8px;">⚡ LIVE API MODE (Gemini Connected)</span>'
+        if is_live_api
+        else '<span class="badge-live-gov" style="background: #0284c7; margin-left: 8px;">🟢 DEMO MODE (Offline Grounded Engine Active)</span>'
+    )
+
+    st.markdown(f"""
+    <div class="disaster-header">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h1>
+                    CYCLONE-SHIELD AI
+                    <span class="badge-live-gov">PROTOTYPE SITUATION ROOM</span>
+                    {demo_badge_html}
+                </h1>
+                <p>AI-Powered Cyclone Impact, Infrastructure Vulnerability & Safe Evacuation Planner</p>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 0.8rem; color: #cbd5e1;">Target Area: <b>Awaiting Study Location</b></div>
+                <div style="font-size: 0.75rem; color: #94a3b8;">Multi-Hazard Hydrodynamic & AI Evacuation Pipeline</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.info("📍 Please select a study location to begin the cyclone impact analysis.")
+
+    col_welcome1, col_welcome2 = st.columns([1.8, 1.2])
+    with col_welcome1:
+        st.markdown("""
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                <span>🛡️</span> Welcome to CYCLONE-SHIELD AI
+            </h3>
+            <p style="color: #475569; font-size: 0.95rem; line-height: 1.6;">
+                <b>CYCLONE-SHIELD AI</b> is an agentic, multi-hazard decision-support system engineered for disaster management authorities, emergency responders, and district collectors during extreme cyclonic weather events.
+            </p>
+            <h4 style="color: #1e293b; margin-top: 18px; margin-bottom: 8px; font-size: 1rem;">Platform Capabilities</h4>
+            <div style="display: grid; gap: 10px; font-size: 0.88rem; color: #334155;">
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <span>🌊</span>
+                    <div><b>Multi-Hazard Hydrodynamic Risk Engine:</b> Evaluates 30m Digital Elevation Models (DEM), astronomical tide + storm surge heights, 24h precipitation, and coastal distance to compute composite ward risk scores (0–100).</div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <span>🏥</span>
+                    <div><b>Critical Infrastructure Assessment:</b> Analyzes site flood vulnerabilities and accessibility corridors for hospitals, trauma centers, and designated high-ground shelters.</div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <span>⚡</span>
+                    <div><b>Cascade Failure Modeling:</b> Simulates multi-order dependency chains when submerged roads isolate populations and sever emergency medical access.</div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <span>🧭</span>
+                    <div><b>Safe Evacuation Routing:</b> Dijkstra pathfinding across real road networks that dynamically bypasses submerged arterials to guide citizens to optimal shelters.</div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <span>🤖</span>
+                    <div><b>Gemini Copilot & Multilingual Broadcast:</b> Generates incident commander operational advisories and localized alerts in Telugu, Hindi, Tamil, Odia, and English with voice audio.</div>
+                </div>
+            </div>
+            <hr style="margin: 20px 0 16px 0; border: none; border-top: 1px solid #e2e8f0;" />
+            <h4 style="color: #1e293b; margin-top: 0; margin-bottom: 8px; font-size: 1rem;">🚀 Get Started</h4>
+            <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 12px;">
+                Select <b>Visakhapatnam, Andhra Pradesh</b> from the <b>📍 Select Study Location</b> dropdown in the sidebar, or click below:
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("📍 Select Visakhapatnam, Andhra Pradesh & Begin Analysis", type="primary", use_container_width=True):
+            st.session_state.selected_location = "Visakhapatnam, Andhra Pradesh"
+            st.rerun()
+
+    with col_welcome2:
+        st.markdown("""
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <h4 style="margin: 0; color: #0f172a; font-size: 1rem;">📍 Available Study Jurisdiction</h4>
+                <span style="background: #dbeafe; color: #1e40af; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px;">READY</span>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+                <b style="color: #0f172a; font-size: 0.95rem;">Visakhapatnam Metropolitan Region</b><br/>
+                <span style="color: #64748b; font-size: 0.8rem;">Andhra Pradesh, India • Bay of Bengal Coast</span>
+            </div>
+            <div style="font-size: 0.82rem; color: #334155; line-height: 1.7;">
+                • <b>8 Study Wards:</b> RK Beach, MVP Colony, Port Area, Lawson's Bay, Gajuwaka, Madhurawada, Rushikonda, Pendurthi<br/>
+                • <b>6 Hospitals:</b> KGH, Care Hospital, Apollo, SevenHills, Vizag General, PINDO<br/>
+                • <b>6 Relief Shelters:</b> AU Campus, Port Trust Shelter, GVMC Community Center, etc.<br/>
+                • <b>7 Arterial Corridors:</b> Beach Road, NH16, Port Access Corridor, Waltair Main Road<br/>
+                • <b>Topography:</b> High-resolution 30m digital elevation grid
+            </div>
+            <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 0.75rem; color: #64748b;">
+                💡 <i>Additional coastal districts and river basins can be integrated seamlessly via the modular data ingestion pipeline.</i>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Footer for placeholder state
+    st.markdown("---")
+    st.markdown("""
+    <div style="text-align: center; color: #64748b; font-size: 0.76rem; padding: 16px 0; border-top: 1px solid #e2e8f0; margin-top: 20px;">
+        <b>CYCLONE-SHIELD AI</b> — Disaster Management Decision-Support Prototype.<br/>
+        <i>About / Demo Disclaimer:</i> This is a prototype decision-support system for demonstration purposes. Risk values and recommendations are simulated/model-generated and are not official emergency warnings.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.stop()
 
 
 # ==========================================
